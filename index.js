@@ -34,13 +34,13 @@ exports.bin = function(cmdConfig){
     cmd.setConfigDir(cmdConfig.configDir);
     cmd.setPluginDir(cmdConfig.pluginDir);
     var pluginName = arr.shift();//插件的名称
-    pluginName = cmd.getPluginName(pluginName);
     var valueArr = [];
     var option = {};
     if(!pluginName){
         pluginName = "helper";
     }else{
         try{
+            pluginName = cmd.getPluginName(pluginName);
             valueArr = argvParser.getValueArr(arr);
             option = argvParser.getOption(arr, null, cmd, pluginName);
         }catch(e){
