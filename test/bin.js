@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var cmdJs = require("../index.js");
-cmdJs.init({
+cmdJs.bin({
     configDir : cmdJs.path2.join(__dirname, "config"),
     pluginDir : cmdJs.path2.join(__dirname, "plugin")
-}).bin();
+});

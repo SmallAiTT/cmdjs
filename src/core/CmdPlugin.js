@@ -1,42 +1,38 @@
 /**
  * Created by SmallAiTT on 2015/4/27.
  */
-var path = require("path2");
 var clazz = require("clazz");
 var strUtils = require("str-utils");
 
 var Plugin = clazz.extends({
     name : null,
-    cmdConfig : null,
+    cmd : null,
     pluginConfig: null,
     optionConfig:null,
     exec : function(cmdName, valueArr, option, onEnd){
-        var value, opt;
-        try{
-            value = this.getValue(valueArr);
-            opt = this.getOption(option);
-        }catch(e){
-            return onEnd(e);
-        }
-        this.run(value, opt, onEnd);
+        var self = this;
+        var value = self.getValue(valueArr);
+        var opt = self.getOption(option);
+        self.run(value, opt, onEnd);
     },
     getValue : function(valueArr){
-        var cmdJs = require("../../index");
-        var pc = this.pluginConfig[this.name];
+        var self = this, cmd = self.cmd, name = self.name,
+            config = cmd.config, pluginConfig = config.plugin;
+        var pc = pluginConfig[self.name];
         var cfg = pc.value;
         if(!cfg){
-            if(valueArr.length > 0) throw cmdJs.getMsg("err.pluginValue", this.name);
+            if(valueArr.length > 0) throw cmd.getMsg("err.pluginValue", name);
             return null;
         }
         var type = cfg.type;
         var l = valueArr.length;
-        if(type == "none" && l > 0) throw cmdJs.getMsg("err.pluginValue", this.name);
+        if(type == "none" && l > 0) throw cmd.getMsg("err.pluginValue", name);
         if(
             (l != 1 && (type == "*" || type == "string" || type == "number"))
             || (l != 0 && type == "none")
             || (type == "array" && cfg.length != null && cfg.length != l)
         ){
-            throw cmdJs.getMsg("err.pluginValueCount", this.name);
+            throw cmd.getMsg("err.pluginValueCount", name);
         }
         var value;
         switch (type){
@@ -61,7 +57,7 @@ var Plugin = clazz.extends({
                         if(v.indexOf(".") >= 0) value = parseFloat(v);
                         else value = parseInt(v);
                     }else{
-                        throw cmdJs.getMsg("err.optionType", this.name, key, type);
+                        throw cmd.getMsg("err.pluginValueType", name, type);
                     }
                 }
                 break;
@@ -72,22 +68,23 @@ var Plugin = clazz.extends({
         return value;
     },
     getOption : function(option){
-        var cmdJs = require("../../index");
+        var self = this, cmd = self.cmd, name = self.name,
+            config = cmd.config, pluginConfig = config.plugin, optionConfig = config.option;
         var opt = {};
-        var pc = this.pluginConfig[this.name];
+        var pc = pluginConfig[this.name];
         var oc = pc.option || {};
         for (var key in option) {
             var valueArr = option[key] || [];
             var cfg = oc[key];
             if(!cfg){
-                throw cmdJs.getMsg("err.optionNotFound", this.name, key);
+                throw cmd.getMsg("err.optionNotFound", name, key);
             }
             var ref = cfg.ref;
             if(ref){
                 ref = ref.toLowerCase();
-                cfg = this.optionConfig[ref];
+                cfg = optionConfig[ref];
                 if(!cfg){
-                    throw cmdJs.getMsg("err.optionNotFound", this.name, key + "->globalOption." + ref);
+                    throw cmd.getMsg("err.optionNotFound", name, key + "->globalOption." + ref);
                 }
             }
             var type = cfg.type || "*";
@@ -97,7 +94,7 @@ var Plugin = clazz.extends({
                 || (l != 0 && type == "none")
                 || (type == "array" && cfg.length != null && cfg.length != l)
             ){
-                throw cmdJs.getMsg("err.optionCount", this.name, key);
+                throw cmd.getMsg("err.optionCount", name, key);
             }
             switch (type){
                 case "*":
@@ -121,7 +118,7 @@ var Plugin = clazz.extends({
                             if(v.indexOf(".") >= 0) opt[key] = parseFloat(v);
                             else opt[key] = parseInt(v);
                         }else{
-                            throw cmdJs.getMsg("err.optionType", this.name, key, type);
+                            throw cmd.getMsg("err.optionType", name, key, type);
                         }
                     }
                     break;
@@ -141,15 +138,15 @@ var Plugin = clazz.extends({
                 var ref = cfg.ref;
                 if(ref){
                     ref = ref.toLowerCase();
-                    cfg = this.optionConfig[ref];
+                    cfg = optionConfig[ref];
                     if(!cfg){
-                        throw cmdJs.getMsg("err.optionNotFound", this.name, key + "->globalOption." + ref);
+                        throw cmd.getMsg("err.optionNotFound", name, key + "->globalOption." + ref);
                     }
                 }
                 var defaultValue = cfg["default"];
                 var required = cfg["required"];
                 if(required && defaultValue == null){
-                    throw cmdJs.getMsg("err.optionRequired", this.name, key);
+                    throw cmd.getMsg("err.optionRequired", name, key);
                 }
                 opt[key] = defaultValue;
             }
