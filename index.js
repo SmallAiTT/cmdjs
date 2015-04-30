@@ -34,13 +34,18 @@ exports.bin = function(cmdConfig){
     cmd.setConfigDir(cmdConfig.configDir);
     cmd.setPluginDir(cmdConfig.pluginDir);
     var pluginName = arr.shift();//插件的名称
+    pluginName = cmd.getPluginName(pluginName);
     var valueArr = [];
     var option = {};
     if(!pluginName){
         pluginName = "helper";
     }else{
-        valueArr = argvParser.getValueArr(arr);
-        option = argvParser.getOption(arr);
+        try{
+            valueArr = argvParser.getValueArr(arr);
+            option = argvParser.getOption(arr, null, cmd, pluginName);
+        }catch(e){
+            return console.log(e);
+        }
     }
     pluginName = pluginName.toLowerCase();
     cmd.execPlugin(cmdName, pluginName, valueArr, option, function(err){
@@ -64,9 +69,9 @@ exports.log4Helper = function(pluginName, optionName, desc){
     else optionName = "";
     var arr = desc.split("\n");
     for (var i = 0, l_i = arr.length; i < l_i; i++) {
-        result += strUtils.format("\033[1;36;1m%s", strUtils.joinBlank(pluginName, 12));
+        result += strUtils.format("\033[1;36;1m%s", strUtils.joinBlank(pluginName, 16));
         pluginName = "";
-        result += strUtils.format("\033[1;32;1m%s", strUtils.joinBlank(optionName, 16));
+        result += strUtils.format("\033[1;32;1m%s", strUtils.joinBlank(optionName, 24));
         optionName = "";
         result += strUtils.format("\033[0m%s", arr[i]);
         if(i < l_i - 1) result += "\n";

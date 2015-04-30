@@ -28,7 +28,7 @@ var Plugin = clazz.extends({
         var l = valueArr.length;
         if(type == "none" && l > 0) throw cmd.getMsg("err.pluginValue", name);
         if(
-            (l != 1 && (type == "*" || type == "string" || type == "number"))
+            (l != 1 && (cfg["default"] == null) && (type == "*" || type == "string" || type == "number"))
             || (l != 0 && type == "none")
             || (type == "array" && cfg.length != null && cfg.length != l)
         ){
@@ -90,7 +90,7 @@ var Plugin = clazz.extends({
             var type = cfg.type || "*";
             var l = valueArr.length;
             if(
-                (l != 1 && (type == "*" || type == "string" || type == "number"))
+                (l != 1 && (cfg["default"] == null) && (type == "*" || type == "string" || type == "number"))
                 || (l != 0 && type == "none")
                 || (type == "array" && cfg.length != null && cfg.length != l)
             ){

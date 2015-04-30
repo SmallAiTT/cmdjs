@@ -30,10 +30,12 @@ module.exports = cmdJs.CmdPlugin.extends({
         var pc = pluginConfig[pluginName];
         if(pluginNameMap[pluginName]){
             var desc = pc.desc || cmd.getMsg("info.noPluginDesc");
-            cmdJs.log4Helper(pluginName, null, desc);
+            var pluginStr = pluginName;
+            if(pc.short) pluginStr += "(" + pc.short + ")";
+            cmdJs.log4Helper(pluginStr, null, desc);
             var optCfg = pc.option;
             if(optCfg){
-                console.log();
+                console.log();//让输出多一行
                 for (var optionName in optCfg) {
                     var cfg = optCfg[optionName];
                     if(!cfg) continue;
@@ -44,8 +46,10 @@ module.exports = cmdJs.CmdPlugin.extends({
                     }
                     desc = cfg.desc || cmd.getMsg("info.noOptionDesc");
 
-                    cmdJs.log4Helper("", optionName, desc);
-                    console.log();
+                    var optionNameStr = "--" + optionName;
+                    if(cfg.short) optionNameStr += "(-" + cfg.short + ")";
+                    cmdJs.log4Helper("", optionNameStr, desc);
+                    console.log();//让输出多一行
                 }
             }
             console.log("----------------------------\n");

@@ -54,7 +54,7 @@ module.exports = clazz.extends({
     ctor : function(){
         var self = this;
         self._super.apply(self, arguments);
-        self.config = this.genConfig();
+        self.config = self.genConfig();
         //先初始化默认的plugin，目前就是默认提供了helper。
         self.setPluginDir(path.join(__dirname, "../../plugin"));
     },
@@ -121,7 +121,7 @@ module.exports = clazz.extends({
      * @param configPath
      */
     addPluginConfig : function(configPath){
-        var cfg = this.config.plugin;
+        var config = this.config, cfg = config.plugin;
         if(fs.existsSync(configPath)){
             var content = fs.readFileSync(configPath).toString();
             content = JSON.parse(content);
@@ -136,6 +136,11 @@ module.exports = clazz.extends({
                 }
             }
             changeKeyToLowerCase(cfg, 2);
+        }
+        for (var key in cfg) {
+            var pc = cfg[key];
+            if(!pc) continue;
+            if(pc.short) config.shortPluginNameMap[pc.short] = key;
         }
     },
 
@@ -164,7 +169,8 @@ module.exports = clazz.extends({
             msg : require("../../config/msg"),
             plugin : require("../../config/plugin"),
             option : require("../../config/option"),
-            pluginNameMap : {}
+            pluginNameMap : {},
+            shortPluginNameMap : {}
         };
         changeKeyToLowerCase(config.global, 2);
         changeKeyToLowerCase(config.plugin, 2);
@@ -224,6 +230,14 @@ module.exports = clazz.extends({
         return msg;
     },
 
+    getPluginName : function(name){
+        name = name.toLowerCase();
+        var pluginPath = this.config.pluginNameMap[name];
+        if(!pluginPath){//找不到全名的命令
+            name = this.config.shortPluginNameMap[name];
+        }
+        return name;
+    },
     /**
      * 获取一个插件。
      * @param name
@@ -231,13 +245,14 @@ module.exports = clazz.extends({
      */
     getPlugin : function(name){
         try{
-            name = name.toLowerCase();
-            var pluginPath = this.config.pluginNameMap[name];
+            var self = this;
+            name = self.getPluginName(name);
+            var pluginPath = self.config.pluginNameMap[name];
             if(!pluginPath) return null;
             var Plugin = require(pluginPath);
             var plugin = new Plugin();
             plugin.name = name;
-            plugin.cmd = this;
+            plugin.cmd = self;
             return plugin;
         }catch(e){
             console.trace(e);

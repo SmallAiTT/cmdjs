@@ -13,7 +13,9 @@ var path = require("path");
 exports.getValueArr = function(arr){
     var valueArr = [];
     for(var i = 0; i < arr.length; ){
-        if(arr[i].indexOf("-") == 0){
+        if(arr[i].indexOf("--") == 0){
+            break;
+        }else if(arr[i].indexOf("-") == 0){
             break;
         }else{
             var str = arr.shift();
@@ -31,10 +33,28 @@ exports.getValueArr = function(arr){
  * @param option
  * @returns {*}
  */
-exports.getOption = function(optionStrArr, option){
+exports.getOption = function(optionStrArr, option, cmd, pluginName){
     option = option || {};
     if(optionStrArr.length == 0) return option;
-    var key = optionStrArr.shift().substring(1);
-    option[key.toLocaleLowerCase()] = exports.getValueArr(optionStrArr);
-    return exports.getOption(optionStrArr, option);
+    var pc = cmd.config.plugin[pluginName];
+    var oc = pc.option;
+    var optionName = optionStrArr.shift();
+    if(optionName.indexOf("--") == 0){
+        optionName = optionName.substring(2);
+        if(!oc[optionName]) throw cmd.getMsg("err.optionNotFound", pluginName, "--" + optionName);
+    }else{
+        optionName = optionName.substring(1);
+        var flag = false;
+        for (var key in oc) {
+            var cfg = oc[key];
+            if(cfg.short == optionName){
+                flag = true;
+                optionName = key;
+                break;
+            }
+        }
+        if(!flag) throw cmd.getMsg("err.optionNotFound", pluginName, "-" + optionName);
+    }
+    option[optionName.toLocaleLowerCase()] = exports.getValueArr(optionStrArr);
+    return exports.getOption(optionStrArr, option, cmd);
 };
