@@ -135,11 +135,12 @@ module.exports = clazz.extends({
                     oldOpt[key2] = opt[key2];
                 }
             }
-            changeKeyToLowerCase(cfg, 2);
+            changeKeyToLowerCase(cfg, 1);//只转换plugin name成小写
         }
         for (var key in cfg) {
             var pc = cfg[key];
             if(!pc) continue;
+            if(pc.option) changeKeyToLowerCase(pc.option, 1);//只转换option name成小写
             if(pc.short) config.shortPluginNameMap[pc.short] = key;
         }
     },
