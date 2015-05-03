@@ -65,8 +65,7 @@ exports.bin = function(cmdConfig){
  */
 exports.log4Helper = function(pluginName, optionName, desc){
     var result = "";
-    if(optionName != null && optionName != "") optionName = "-" + optionName;
-    else optionName = "";
+    optionName = optionName || "";
     var arr = desc.split("\n");
     for (var i = 0, l_i = arr.length; i < l_i; i++) {
         result += strUtils.format("\033[1;36;1m%s", strUtils.joinBlank(pluginName, 16));
