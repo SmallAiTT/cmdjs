@@ -42,6 +42,8 @@ var Plugin = clazz.extends({
                     if(v && v.match(strUtils.NUM_EXP)){
                         if(v.indexOf(".") >= 0) value = parseFloat(v);
                         else value = parseInt(v);
+                    }else if(v == null){
+                        value = cfg["default"];
                     }
                 }
                 break;
@@ -49,6 +51,7 @@ var Plugin = clazz.extends({
                 if(l == 1){
                     value = valueArr[0];
                 }
+                if(value == null) value = cfg["default"];
                 break;
             case "number":
                 if(l == 1){
@@ -56,6 +59,8 @@ var Plugin = clazz.extends({
                     if(v && v.match(strUtils.NUM_EXP)){
                         if(v.indexOf(".") >= 0) value = parseFloat(v);
                         else value = parseInt(v);
+                    }else if(v == null){
+                        value = cfg["default"];
                     }else{
                         throw cmd.getMsg("err.pluginValueType", name, type);
                     }
@@ -63,6 +68,7 @@ var Plugin = clazz.extends({
                 break;
             case "array":
                 value = valueArr;
+                value = value || cfg["default"] || [];
                 break;
         }
         return value;
