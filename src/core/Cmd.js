@@ -55,7 +55,7 @@ module.exports = clazz.extends({
         var self = this;
         self._super.apply(self, arguments);
         self.config = self.genConfig();
-        //先初始化默认的plugin，目前就是默认提供了helper。
+        //先初始化默认的plugin，目前就是默认提供了help。
         self.setPluginDir(path.join(__dirname, "../../plugin"));
     },
 

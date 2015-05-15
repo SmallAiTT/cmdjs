@@ -3,7 +3,7 @@
  */
 var cmdJs = require("../index.js");
 cmdJs.init({});
-cmdJs.execPlugin("test", "helper", [], {}, function(err){
+cmdJs.execPlugin("test", "help", [], {}, function(err){
     if(err) {
         console.log(err);
     }

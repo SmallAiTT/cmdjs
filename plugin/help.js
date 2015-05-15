@@ -6,7 +6,7 @@ var cmdJs = require("../index");
 module.exports = cmdJs.CmdPlugin.extends({
     run : function(value, option, onEnd){
         var self = this;
-        var index = value.indexOf("helper");
+        var index = value.indexOf("help");
         if(index >= 0) value.splice(index, 1);
 
         var pluginConfig = self.cmd.config.plugin;

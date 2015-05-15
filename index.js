@@ -37,7 +37,7 @@ exports.bin = function(cmdConfig){
     var valueArr = [];
     var option = {};
     if(!pluginName){
-        pluginName = "helper";
+        pluginName = "help";
     }else{
         try{
             pluginName = cmd.getPluginName(pluginName);
@@ -52,13 +52,13 @@ exports.bin = function(cmdConfig){
         if(err) {
             console.log(err);
         }
-        else if(pluginName != "helper") {
+        else if(pluginName != "help") {
             console.log(cmd.getMsg("info.cmdSuccessfully", pluginName));
         }
     });
 };
 /**
- * 为helper提供日志输出。
+ * 为help提供日志输出。
  * @param pluginName
  * @param optionName
  * @param desc
