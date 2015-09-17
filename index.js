@@ -78,3 +78,35 @@ exports.log4Helper = function(pluginName, optionName, desc){
     result = result.replace(/\\033/g, "\033");
     console.log(result);
 };
+
+var child_process = require('child_process');
+/**
+ * 执行命令行命令，例如 cmdJs.runCmd(TexturePacker, 'xxx', {'--scale':1}, cb)
+ * @param cmdName   命令行命令名称
+ */
+exports.runCmd = function(cmdName){
+    var arr = Array.prototype.slice.call(arguments, 1);
+    var cb = arr[arr.length - 1];
+    if(typeof cb == 'function'){
+        arr.pop();
+    }else{
+        cb = null;
+    }
+
+    var cmdStr = '';
+    cmdStr += cmdName + ' ';
+    for (var i = 0, l_i = arr.length; i < l_i; i++) {
+        var subParam = arr[i];
+        var type = typeof subParam;
+        if(type == 'string' || type == 'number' || type == 'boolean'){
+            cmdStr += ' ' + subParam;
+        }else if(type == 'object'){
+            for (var key in subParam) {
+                cmdStr += ' ' + key + ' ' + subParam[key];
+            }
+        }
+    }
+    child_process.exec(cmdStr, function(error, stdout, stderr){
+        if(cb) cb(error, stdout, stderr);
+    });
+};
